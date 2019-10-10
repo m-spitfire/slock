@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 #include <sys/types.h>
 #include <X11/extensions/Xrandr.h>
 #include <X11/extensions/dpms.h>
@@ -30,6 +31,8 @@
 #include "util.h"
 
 char *argv0;
+
+static time_t locktime;
 
 enum {
 	INIT,
@@ -184,6 +187,7 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 	oldc = INIT;
 
 	while (running && !XNextEvent(dpy, &ev)) {
+		running = !((time(NULL) - locktime < timetocancel) && (ev.type == MotionNotify));
 		if (ev.type == KeyPress) {
 			explicit_bzero(&buf, sizeof(buf));
 			num = XLookupString(&ev.xkey, buf, sizeof(buf), &ksym, 0);
@@ -354,6 +358,7 @@ lockscreen(Display *dpy, struct xrandr *rr, int screen)
 
 			XSelectInput(dpy, lock->root, SubstructureNotifyMask);
 			drawlogo(dpy, lock, INIT);
+			locktime = time(NULL);
 			return lock;
 		}
 
@@ -546,6 +551,8 @@ main(int argc, char **argv) {
 		XFreePixmap(dpy, locks[s]->drawable);
 		XFreeGC(dpy, locks[s]->gc);
 	}
+	/* reset DPMS values to initial ones*/
+	DPMSSetTimeouts(dpy, standby, suspend, off);
 
 	XSync(dpy, 0);
 	XCloseDisplay(dpy);
