@@ -41,7 +41,7 @@ dist: clean
 	@gzip slock-${VERSION}.tar
 	@rm -rf slock-${VERSION}
 
-install: all
+install: clean all
 	@echo installing executable file to ${DESTDIR}${PREFIX}/bin
 	@mkdir -p ${DESTDIR}${PREFIX}/bin
 	@cp -f slock ${DESTDIR}${PREFIX}/bin
