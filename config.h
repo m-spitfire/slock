@@ -1,19 +1,20 @@
+#ifndef HAVE_PAM
 /* user and group to drop privileges to */
-static const char *user  = "nobody";
-static const char *group = "nogroup";
+static const char *user  = "spitfire";
+static const char *group = "wheel";
+#endif // HAVE_PAM
 
 static const char *colorname[NUMCOLS] = {
-	[INIT] =   "black",     /* after initialization */
-	[INPUT] =  "#005577",   /* during input */
-	[FAILED] = "#CC3333",   /* wrong password */
-	[PAM] =    "#9400D3",   /* waiting for PAM */
+	[INIT] =   "#c7cfe1",     /* after initialization */
+	[INPUT] =  "#799cc6",   /* during input */
+	[FAILED] = "#e2768d",   /* wrong password */
 };
 
 /* treat a cleared input like a wrong password (color) */
 static const int failonclear = 1;
 
 /* time in seconds before the monitor shuts down */
-static const int monitortime = 5;
+static const int monitortime = 30;
 
 /* insert grid pattern with scale 1:1, the size can be changed with logosize */
 static const int logosize = 75;
